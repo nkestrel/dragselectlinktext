@@ -1,0 +1,56 @@
+{
+  "name": "dragselectlinktext",
+  "title": "Drag-Select Link Text",
+  "id": "dragselectlinktext@kestrel",
+  "description": "Select link text with easy drag gestures.",
+  "author": "Kestrel",
+  "license": "MPL 2.0",
+  "version": "1.0",
+  "icon": "icon32.png",
+  "icon64": "icon64.png",
+  "permissions": {"private-browsing": true},
+  "preferences": [{
+      "name": "selectGesture",
+      "type": "radio",
+      "title": "Selection drag gesture",
+      "value": "horizontalSelect",
+      "options": [
+          {
+              "value": "horizontalSelect",
+              "label": "Horizontal"
+          },
+          {
+              "value": "holdSelect",
+              "label": "Hold"
+          },
+          {
+              "value": "immediateSelect",
+              "label": "Immediate"
+          }
+      ]
+    },
+    {
+        "name": "holdTimeMS",
+        "title": "Hold time (milliseconds)",
+        "type": "integer",
+        "value": 300
+    },    
+    {
+        "name": "dragThresholdX",
+        "title": "Horizontal drag threshold (pixels)",
+        "type": "integer",
+        "value": 5
+    },
+    {
+        "name": "dragThresholdY",
+        "title": "Vertical drag threshold (pixels)",
+        "type": "integer",
+        "value": 5
+    },
+    {
+        "name": "changeCursor",
+        "title": "Change cursor",
+        "type": "bool",
+        "value": true
+    }]
+}
