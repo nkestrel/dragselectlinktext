@@ -2,4 +2,4 @@
 
 .dragselectlinktext-textcursor * { cursor: text !important; }
 
-.dragselectlinktext-grabcursor * { cursor: grab !important; }
+.dragselectlinktext-grabcursor * { cursor: -moz-grab !important; }

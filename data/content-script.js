@@ -8,13 +8,13 @@
  */
 
 const TEXT_NODE = 3;
+var overrideUnselectable = false;
 
 var window = document.defaultView;
 window.addEventListener("mousedown", onMouseDown, true);
 
 self.port.on("detach", function(reason) {
   if (reason == "disable") {
-    console.log("detach disable");
     window.removeEventListener("mousedown", onMouseDown, true);
     changeCursor("");
   }
@@ -22,22 +22,24 @@ self.port.on("detach", function(reason) {
 
 self.port.on("cursor", changeCursor);
 
+self.port.on("overrideUnselectable", function(override) {
+  overrideUnselectable = override;
+});
+
 function onMouseDown(event) {
-  console.log("mousedown content");
   // Only interested in left mouse button, use click count (detail) to ignore simulated mousedown,
   // don't interfere when alt modifier being used (possibly for text selection)
   if (event.button == 0 && event.detail != 0 && !event.altKey) {
-    var selectableTextLink = false;
+    var textLink = false;
     var point = { x: event.clientX, y: event.clientY };
-    console.log("mousedown point x: " + point.x + " y: " + point.y );
 
     // Check that cursor is over selectable link text and not inside existing selection
     if (isSelectableTextLink(point) && !inSelection(point)) {
-      selectableTextLink = true;
+      textLink = true;
       // Block mousedown event to prevent dragstart
       event.preventDefault();
     }
-    self.port.emit("selectableTextLink", [selectableTextLink]);
+    self.port.emit("textLink", [textLink]);
   }
 }
 
@@ -48,8 +50,10 @@ function isSelectableTextLink(point) {
   while (el) {
     // Can only select what is selectable
     if (window.getComputedStyle(el).MozUserSelect == "none") {
-      console.log("unselectable");
-      return false;
+      if (overrideUnselectable) {
+        el.style.MozUserSelect = "text";
+      } else
+        return false; 
     }
     if (!foundtextnode && el.tagName && el.tagName.toLowerCase() == 'a') {
       if (isTextNode(point))
@@ -65,7 +69,6 @@ function isTextNode(point) {
   var downrect = el.getBoundingClientRect();
   var pointInsideBox = pointInRect(point, downrect);
   var nodes = el.childNodes;
-  console.log('downrect: ' + downrect.left + " " + downrect.right + " " + downrect.top + " " + downrect.bottom);
   for (var i = 0, iLen = nodes.length; i < iLen; i++) {
     // Require direct child text nodes to contain non-space characters
     if (nodes[i].nodeType == TEXT_NODE && nodes[i].data.trim().length > 0) {
@@ -73,7 +76,6 @@ function isTextNode(point) {
       range.selectNode(nodes[i]);
       var rectList = range.getClientRects();  
       for (var j = 0, jLen = rectList.length; j < jLen; j++) {
-        console.log('textrect: ' + rectList[j].left + " " + rectList[j].right + " " + rectList[j].top + " " + rectList[j].bottom); 
         if (rectList[j].width > 0 && rectList[j].height > 0) {
           if (pointInsideBox) {
             // Can start selection anywhere inside element box as long as a text range is inside
@@ -97,7 +99,6 @@ function inSelection(point) {
   for (var i = 0, iLen = selection.rangeCount; i < iLen; i++) {
     var range = selection.getRangeAt(i);
     if (!range.collapsed && range.isPointInRange(caretPos.offsetNode, caretPos.offset)) {
-      console.log("in selection");
       return true;
     }
   }
@@ -105,7 +106,6 @@ function inSelection(point) {
 }
 
 function changeCursor(cursor) {
-  console.log("cursor: " + cursor);
   var classList = window.document.body.classList;  
   if (cursor == "text") {
     classList.remove("dragselectlinktext-grabcursor");
