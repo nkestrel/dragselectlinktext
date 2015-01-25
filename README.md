@@ -1,7 +1,7 @@
 ## Drag-Select Link Text 
 Firefox browser extension.
 
-![](/icon.png)
+![](/icon64.png)
 
 **Select link text with easy drag gestures.**
 
