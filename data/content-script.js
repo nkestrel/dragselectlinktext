@@ -30,8 +30,8 @@ function onMouseDown(event) {
   // Only interested in left mouse button, use click count (detail) to ignore simulated mousedown,
   // don't interfere when alt modifier being used (possibly for text selection)
   if (event.button == 0 && event.detail != 0 && !event.altKey) {
-    var textLink = false;
-    var point = { x: event.clientX, y: event.clientY };
+    let textLink = false;
+    let point = { x: event.clientX, y: event.clientY };
 
     // Check that cursor is over selectable link text and not inside existing selection
     if (isSelectableTextLink(point) && !inSelection(point)) {
@@ -69,13 +69,13 @@ function isTextNode(point) {
   var downrect = el.getBoundingClientRect();
   var pointInsideBox = pointInRect(point, downrect);
   var nodes = el.childNodes;
-  for (var i = 0, iLen = nodes.length; i < iLen; i++) {
+  for (let i = 0, iLen = nodes.length; i < iLen; i++) {
     // Require direct child text nodes to contain non-space characters
     if (nodes[i].nodeType == TEXT_NODE && nodes[i].data.trim().length > 0) {
-      var range = document.createRange();
+      let range = document.createRange();
       range.selectNode(nodes[i]);
-      var rectList = range.getClientRects();  
-      for (var j = 0, jLen = rectList.length; j < jLen; j++) {
+      let rectList = range.getClientRects();  
+      for (let j = 0, jLen = rectList.length; j < jLen; j++) {
         if (rectList[j].width > 0 && rectList[j].height > 0) {
           if (pointInsideBox) {
             // Can start selection anywhere inside element box as long as a text range is inside
@@ -96,8 +96,8 @@ function isTextNode(point) {
 function inSelection(point) {
   var caretPos = document.caretPositionFromPoint(point.x, point.y);
   var selection = window.getSelection();
-  for (var i = 0, iLen = selection.rangeCount; i < iLen; i++) {
-    var range = selection.getRangeAt(i);
+  for (let i = 0, iLen = selection.rangeCount; i < iLen; i++) {
+    let range = selection.getRangeAt(i);
     if (!range.collapsed && range.isPointInRange(caretPos.offsetNode, caretPos.offset)) {
       return true;
     }
@@ -107,15 +107,18 @@ function inSelection(point) {
 
 function changeCursor(cursor) {
   var classList = window.document.body.classList;  
-  if (cursor == "text") {
-    classList.remove("dragselectlinktext-grabcursor");
-    classList.add("dragselectlinktext-textcursor");
-  } else if (cursor == "grab") {  
-    classList.remove("dragselectlinktext-textcursor");
-    classList.add("dragselectlinktext-grabcursor");
-  } else { 
-    classList.remove("dragselectlinktext-textcursor");
-    classList.remove("dragselectlinktext-grabcursor");
+  switch (cursor) {
+    case "text":
+      classList.remove("dragselectlinktext-grabcursor");
+      classList.add("dragselectlinktext-textcursor");
+      break;
+    case "grab":
+      classList.remove("dragselectlinktext-textcursor");
+      classList.add("dragselectlinktext-grabcursor");
+      break;
+    default:
+      classList.remove("dragselectlinktext-textcursor");
+      classList.remove("dragselectlinktext-grabcursor");
   }
 }
 
