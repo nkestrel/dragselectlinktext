@@ -5,7 +5,7 @@
   "description": "Select link text with easy drag gestures.",
   "author": "Kestrel",
   "license": "MPL 2.0",
-  "version": "1.1",
+  "version": "1.3",
   "icon": "icon32.png",
   "icon64": "icon64.png",
   "permissions": {"private-browsing": true},
@@ -55,7 +55,7 @@
     },
     {
         "name": "overrideUnselectable",
-        "title": "Override unselectable text (requires refresh)",
+        "title": "Override unselectable text",
         "type": "bool",
         "value": false
     }]
