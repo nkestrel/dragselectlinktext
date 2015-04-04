@@ -5,7 +5,7 @@ Firefox browser extension.
 
 **Select link text with easy drag gestures.**
 
-Selecting link text can be difficult, requiring careful cursor placement on the outside edges of the link or holding the alt key. The latter is cumbersome and can cause unwanted actions. Releasing the alt key too early results in the link being clicked and often the menu bar is toggled as it shares the same key-mapping. Drag gestures offer a better balance of functionality, making text selection easier while still allowing link dragging.
+Selecting link text has never been so easy! Don't fumble trying to select links from the outside edges or holding the alt key and possibly clicking the link by accident or triggering the menubar. Just perform a simple drag gesture on the link precisely where you want selection to start.
 
 Three different types of selection gestures are available:
 
