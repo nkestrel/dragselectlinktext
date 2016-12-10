@@ -74,5 +74,11 @@
         "title": "Override unselectable text",
         "type": "bool",
         "value": false
+    },
+    {
+        "name": "restoreDefaults",
+        "title": " ",
+        "type": "control",
+        "label": "Default"
     }]
 }

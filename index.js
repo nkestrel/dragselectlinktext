@@ -20,6 +20,7 @@ var windows = require("sdk/windows").browserWindows,
   simplePrefs = require("sdk/simple-prefs"),
   pageMod = require("sdk/page-mod"),
   self = require("sdk/self"),
+  { viewFor } = require("sdk/view/core"),
 
   // Preferences
   pref_selectGesture,
@@ -265,6 +266,18 @@ function onPrefChange(prefName) {
   pref_changeCursor = simplePrefs.prefs.changeCursor;
   pref_overrideUnselectable = simplePrefs.prefs.overrideUnselectable;
 }
+
+simplePrefs.on("restoreDefaults", function() {
+  if (viewFor(windows.activeWindow).confirm("Restore defaults?")) {
+    simplePrefs.prefs.selectGesture = "horizontalSelect";
+    simplePrefs.prefs.dragThresholdX = 5;
+    simplePrefs.prefs.dragThresholdY = 5;
+    simplePrefs.prefs.holdTimeMS = 300;
+    simplePrefs.prefs.selectAllHoldTimeMS = 1000;
+    simplePrefs.prefs.changeCursor = true;
+    simplePrefs.prefs.overrideUnselectable = false;
+  }
+});
 
 function changeCursor(type) {
   if (pref_changeCursor)
