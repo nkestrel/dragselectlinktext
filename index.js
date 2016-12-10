@@ -55,7 +55,7 @@ exports.main = function() {
   });
   
   // Enumerate existing windows and catch new
-  for each (var window in utils.windows("navigator:browser", { includePrivate: true })) {
+  for (var window of utils.windows("navigator:browser", { includePrivate: true })) {
     winLoad(window);
   }  
   windows.on("open", onWinOpen); 
@@ -64,7 +64,7 @@ exports.main = function() {
 exports.onUnload = function (reason) { 
   if (reason != "shutdown") {
     windows.on("open", function(){});
-    for each (var window in utils.windows("navigator:browser", { includePrivate: true })) {
+    for (var window of utils.windows("navigator:browser", { includePrivate: true })) {
       winUnload(window);
     }
   }
