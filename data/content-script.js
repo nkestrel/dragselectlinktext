@@ -28,6 +28,16 @@ self.port.on("overrideUnselectable", function(override) {
   overrideUnselectable = override;
 });
 
+self.port.on("selectAll", function(multiSelect) {
+  let selection = window.getSelection();
+  let range = document.createRange();
+  range.selectNodeContents(linkElement);
+  if (!multiSelect) {
+    selection.removeAllRanges();
+  }
+  selection.addRange(range);
+});
+
 function onMouseDown(event) {
   // Only interested in left mouse button, use click count (detail) to ignore simulated mousedown,
   // don't interfere when alt modifier being used (possibly for text selection)

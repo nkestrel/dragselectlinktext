@@ -44,7 +44,13 @@
         "title": "Hold time (milliseconds)",
         "type": "integer",
         "value": 300
-    },    
+    },
+    {
+        "name": "selectAllHoldTimeMS",
+        "title": "Select all hold time (milliseconds)",
+        "type": "integer",
+        "value": 1000
+    },
     {
         "name": "dragThresholdX",
         "title": "Horizontal drag threshold (pixels)",

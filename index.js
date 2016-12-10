@@ -26,6 +26,7 @@ var windows = require("sdk/windows").browserWindows,
   pref_dragThresholdX,
   pref_dragThresholdY,
   pref_holdTimeMS,
+  pref_selectAllHoldTimeMS,
   pref_changeCursor,
   pref_overrideUnselectable,
 
@@ -36,7 +37,9 @@ var windows = require("sdk/windows").browserWindows,
   downOnTextLink = false,
   dragging = false,
   cursorChanged = false,
-  holdTimeout;
+  selectedAll = false,
+  holdTimeout,
+  selectAllHoldTimeout;
 
 
 exports.main = function() {
@@ -100,6 +103,16 @@ function pageAttach(worker) {
         }, pref_holdTimeMS);
       }
 
+      // Select full link after select hold time
+      selectAllHoldTimeout = downWindow.setTimeout(function() {
+        changeCursor("grab");
+        selectedAll = true;
+        if (workerPort) {
+          workerPort.emit("selectAll", downEvent.ctrlKey || downEvent.metaKey);
+        }
+        downWindow.removeEventListener("mousemove", onMouseMove, true);
+      }, pref_selectAllHoldTimeMS);
+
       // Only attach mousemove listener when needed
       downWindow.addEventListener("mousemove", onMouseMove, true);
     }
@@ -129,6 +142,7 @@ function onMouseMove(event) {
         Math.abs(event.screenY - downEvent.screenY) > pref_dragThresholdY) {
       // Immediately cancel hold timeout and remove mousemove listener
       downWindow.clearTimeout(holdTimeout);
+      downWindow.clearTimeout(selectAllHoldTimeout);
       downWindow.removeEventListener("mousemove", onMouseMove, true);
       
       // Modifiers always do selection (alt modifier never gets to this point)
@@ -180,6 +194,10 @@ function onMouseMove(event) {
 
 function onMouseUp(event) {
   cleanup();
+  if (selectedAll) {
+    event.preventDefault();
+    selectedAll= false;
+  }
 }
 
 function onDragStart(event) {
@@ -196,6 +214,7 @@ function onDragEnd(event) {
 function cleanup() {
   if (downWindow) {
     downWindow.clearTimeout(holdTimeout);
+    downWindow.clearTimeout(selectAllHoldTimeout);
     downWindow.removeEventListener("mousemove", onMouseMove, true);
   }
   if (cursorChanged)
@@ -225,6 +244,7 @@ function onPrefChange(prefName) {
   pref_dragThresholdX = simplePrefs.prefs.dragThresholdX;
   pref_dragThresholdY = simplePrefs.prefs.dragThresholdY;
   pref_holdTimeMS = simplePrefs.prefs.holdTimeMS;
+  pref_selectAllHoldTimeMS = simplePrefs.prefs.selectAllHoldTimeMS;
   pref_changeCursor = simplePrefs.prefs.changeCursor;
   pref_overrideUnselectable = simplePrefs.prefs.overrideUnselectable;
 }
