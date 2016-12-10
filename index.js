@@ -86,9 +86,13 @@ function pageAttach(worker) {
     workerPort = this; 
     downOnTextLink = payload[0];
     if (downWindow && downOnTextLink) {
-      // Change cursor after hold time to give visual feedback
-      if (pref_selectGesture == selectGesture.hold || 
-          pref_selectGesture == selectGesture.immediate) {
+      // Change cursor after hold time to give visual feedback except when modifier
+      // keys are pressed which force selection
+      if ((pref_selectGesture == selectGesture.hold ||
+           pref_selectGesture == selectGesture.immediate) &&
+          !(downEvent.ctrlKey ||
+            downEvent.shiftKey ||
+            downEvent.metaKey)) {
         holdTimeout = downWindow.setTimeout(function() {
           holdTimeout = null;
           if (pref_changeCursor) {
