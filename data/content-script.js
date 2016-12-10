@@ -10,6 +10,8 @@
 const TEXT_NODE = 3;
 var overrideUnselectable = false;
 
+var linkElement = null;
+
 var window = document.defaultView;
 window.addEventListener("mousedown", onMouseDown, true);
 
@@ -36,6 +38,7 @@ function onMouseDown(event) {
     // Check that cursor is over selectable link text and not inside existing selection
     if (isSelectableTextLink(point) && !inSelection(point)) {
       textLink = true;
+      linkElement = document.elementFromPoint(point.x, point.y);
       // Block mousedown event to prevent dragstart
       event.preventDefault();
     }
@@ -106,19 +109,21 @@ function inSelection(point) {
 }
 
 function changeCursor(cursor) {
-  var classList = window.document.body.classList;  
-  switch (cursor) {
-    case "text":
-      classList.remove("dragselectlinktext-grabcursor");
-      classList.add("dragselectlinktext-textcursor");
-      break;
-    case "grab":
-      classList.remove("dragselectlinktext-textcursor");
-      classList.add("dragselectlinktext-grabcursor");
-      break;
-    default:
-      classList.remove("dragselectlinktext-textcursor");
-      classList.remove("dragselectlinktext-grabcursor");
+  if (linkElement) {
+    var classList = linkElement.classList;
+    switch (cursor) {
+      case "text":
+        classList.remove("dragselectlinktext-grabcursor");
+        classList.add("dragselectlinktext-textcursor");
+        break;
+      case "grab":
+        classList.remove("dragselectlinktext-textcursor");
+        classList.add("dragselectlinktext-grabcursor");
+        break;
+      default:
+        classList.remove("dragselectlinktext-textcursor");
+        classList.remove("dragselectlinktext-grabcursor");
+    }
   }
 }
 

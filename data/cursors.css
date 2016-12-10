@@ -1,5 +1,5 @@
 
 
-.dragselectlinktext-textcursor * { cursor: text !important; }
+.dragselectlinktext-textcursor { cursor: text !important; }
 
-.dragselectlinktext-grabcursor * { cursor: -moz-grab !important; }
+.dragselectlinktext-grabcursor { cursor: -moz-grab !important; }
