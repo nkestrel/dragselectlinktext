@@ -189,7 +189,9 @@ function onMouseMove(event) {
         if (cursorChanged)
           changeCursor("");
         wutils.sendMouseEvent("mousedown", point.x, point.y, 0, 0, mods);
-        // Move enough to fire drag event, won't return until drag is finished
+        // Move enough to fire drag event, with e10s off it doesn't return until
+        // drag is finished, with e10s on it returns immediately and doesn't work
+        // before hard coded 5 pixel threshold exceeded
         wutils.sendMouseEvent("mousemove", point.x, point.y + 1000, 0, 0, mods);
       }
     }
