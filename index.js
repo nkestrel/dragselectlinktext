@@ -110,7 +110,6 @@ function pageAttach(worker) {
         if (workerPort) {
           workerPort.emit("selectAll", downEvent.ctrlKey || downEvent.metaKey);
         }
-        downWindow.removeEventListener("mousemove", onMouseMove, true);
       }, pref_selectAllHoldTimeMS);
 
       // Only attach mousemove listener when needed
@@ -126,10 +125,14 @@ function pageAttach(worker) {
 }
 
 function onMouseDown(event) {
-  // Left button down, use click count (detail) to filter simulated mousedown
-  if (event.button == 0 && event.detail != 0) {
-    downEvent = event;
-    downWindow = event.currentTarget;
+  // Use click count (detail) to filter simulated mousedown
+  if (event.detail != 0) {
+    //Left button down
+    if (event.button == 0) {
+      downEvent = event;
+      downWindow = event.currentTarget;
+    }
+    selectedAll = false;
     dragging = false;
     downOnTextLink = false;
   }
@@ -144,20 +147,23 @@ function onMouseMove(event) {
       downWindow.clearTimeout(holdTimeout);
       downWindow.clearTimeout(selectAllHoldTimeout);
       downWindow.removeEventListener("mousemove", onMouseMove, true);
-      
-      // Modifiers always do selection (alt modifier never gets to this point)
-      let select = downEvent.ctrlKey || downEvent.shiftKey || downEvent.metaKey;
-      // Drag method, default to horizontal
-      if (!select) {
-        switch (pref_selectGesture) {
-          case selectGesture.hold:
-            select = holdTimeout == null;
-            break;
-          case selectGesture.immediate:
-            select = holdTimeout != null;
-            break;
-          default:
-            select = Math.abs(event.screenY - downEvent.screenY) <= pref_dragThresholdY;
+
+      let select = false;
+      if (!selectedAll) {
+        // Modifiers always do selection (alt modifier never gets to this point)
+        select = downEvent.ctrlKey || downEvent.shiftKey || downEvent.metaKey;
+        // Drag method, default to horizontal
+        if (!select) {
+          switch (pref_selectGesture) {
+            case selectGesture.hold:
+              select = holdTimeout == null;
+              break;
+            case selectGesture.immediate:
+              select = holdTimeout != null;
+              break;
+            default:
+              select = Math.abs(event.screenY - downEvent.screenY) <= pref_dragThresholdY;
+          }
         }
       }
 
@@ -194,9 +200,18 @@ function onMouseMove(event) {
 
 function onMouseUp(event) {
   cleanup();
-  if (selectedAll) {
+  // When e10s enabled need to block mouseup event
+  if (selectedAll && !dragging) {
     event.preventDefault();
-    selectedAll= false;
+    event.stopPropagation();
+  }
+}
+
+function onClick(event) {
+  // When e10s disabled need to block click event
+  if (selectedAll && !dragging) {
+    event.preventDefault();
+    event.stopPropagation();
   }
 }
 
@@ -229,6 +244,7 @@ function winLoad(window) {
   window.addEventListener("mouseup", onMouseUp, true);
   window.addEventListener("dragstart", onDragStart, true);
   window.addEventListener("dragend", onDragEnd, true);
+  window.addEventListener("click", onClick, true);
 }
 
 function winUnload(window) {
@@ -237,6 +253,7 @@ function winUnload(window) {
   window.removeEventListener("mouseup", onMouseUp, true);
   window.removeEventListener("dragstart", onDragStart, true);
   window.removeEventListener("dragend", onDragEnd, true);
+  window.removeEventListener("click", onClick, true);
 }
 
 function onPrefChange(prefName) {
