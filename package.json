@@ -4,11 +4,21 @@
   "id": "dragselectlinktext@kestrel",
   "description": "Select link text with easy drag gestures.",
   "author": "Kestrel",
-  "license": "MPL 2.0",
-  "version": "1.3",
-  "icon": "icon32.png",
-  "icon64": "icon64.png",
-  "permissions": {"private-browsing": true},
+  "license": "MPL-2.0",
+  "version": "1.4.1",
+  "icon": "icon.png",
+  "main": "index.js",
+  "engines": {
+    "firefox": ">=38.0a1",
+    "seamonkey": ">=2.32"
+  },
+  "keywords": [
+    "jetpack"
+  ],
+  "permissions": {
+    "private-browsing": true,
+    "multiprocess": true
+  },
   "preferences": [{
       "name": "selectGesture",
       "type": "radio",
