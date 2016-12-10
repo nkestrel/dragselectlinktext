@@ -143,7 +143,7 @@ function onMouseMove(event) {
             select = holdTimeout != null;
             break;
           default:
-            select = Math.abs(event.screenY - downEvent.screenY) < pref_dragThresholdY;
+            select = Math.abs(event.screenY - downEvent.screenY) <= pref_dragThresholdY;
         }
       }
 
