@@ -2,7 +2,7 @@
   "name": "dragselectlinktext",
   "title": "Drag-Select Link Text",
   "id": "dragselectlinktext@kestrel",
-  "description": "Select link text with easy drag gestures.",
+  "description": "Select link text with easy mouse gestures.",
   "author": "Kestrel",
   "license": "MPL-2.0",
   "version": "1.4.1",

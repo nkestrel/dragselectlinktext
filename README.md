@@ -3,7 +3,7 @@ Firefox browser extension.
 
 ![](/icon64.png)
 
-**Select link text with easy drag gestures.**
+**Select link text with easy mouse gestures.**
 
 Selecting link text has never been so easy! Don't fumble trying to select links from the outside edges or holding the alt key and possibly clicking the link by accident or triggering the menubar. Just perform a simple drag gesture on the link precisely where you want selection to start.
 
