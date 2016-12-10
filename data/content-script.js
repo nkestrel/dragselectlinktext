@@ -18,6 +18,7 @@ window.addEventListener("mousedown", onMouseDown, true);
 self.port.on("detach", function(reason) {
   if (reason == "disable") {
     window.removeEventListener("mousedown", onMouseDown, true);
+    window.removeEventListener("click", onClickBlock, true);
     changeCursor("");
   }
 });
@@ -36,24 +37,35 @@ self.port.on("selectAll", function(multiSelect) {
     selection.removeAllRanges();
   }
   selection.addRange(range);
+  window.addEventListener("click", onClickBlock, true);
 });
 
 function onMouseDown(event) {
-  // Only interested in left mouse button, use click count (detail) to ignore simulated mousedown,
-  // don't interfere when alt modifier being used (possibly for text selection)
-  if (event.button == 0 && event.detail != 0 && !event.altKey) {
-    let textLink = false;
-    let point = { x: event.clientX, y: event.clientY };
+  // Use click count (detail) to ignore simulated mousedown
+  if (event.detail != 0) {
+    window.removeEventListener("click", onClickBlock, true);
+    // Only interested in left mouse button, don't interfere when alt modifier
+    // being used (possibly for text selection)
+    if (event.button == 0 && !event.altKey) {
+      let textLink = false;
+      let point = { x: event.clientX, y: event.clientY };
 
-    // Check that cursor is over selectable link text and not inside existing selection
-    if (isSelectableTextLink(point) && !inSelection(point)) {
-      textLink = true;
-      linkElement = document.elementFromPoint(point.x, point.y);
-      // Block mousedown event to prevent dragstart
-      event.preventDefault();
+      // Check that cursor is over selectable link text and not inside existing selection
+      if (isSelectableTextLink(point) && !inSelection(point)) {
+        textLink = true;
+        linkElement = document.elementFromPoint(point.x, point.y);
+        // Block mousedown event to prevent dragstart
+        event.preventDefault();
+      }
+      self.port.emit("textLink", [textLink]);
     }
-    self.port.emit("textLink", [textLink]);
   }
+}
+
+function onClickBlock(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  window.removeEventListener("click", onClickBlock, true);
 }
 
 function isSelectableTextLink(point) {

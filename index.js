@@ -205,19 +205,6 @@ function onMouseMove(event) {
 
 function onMouseUp(event) {
   cleanup();
-  // When e10s enabled need to block mouseup event
-  if (selectedAll && !dragging) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-}
-
-function onClick(event) {
-  // When e10s disabled need to block click event
-  if (selectedAll && !dragging) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
 }
 
 function onDragStart(event) {
@@ -249,7 +236,6 @@ function winLoad(window) {
   window.addEventListener("mouseup", onMouseUp, true);
   window.addEventListener("dragstart", onDragStart, true);
   window.addEventListener("dragend", onDragEnd, true);
-  window.addEventListener("click", onClick, true);
 }
 
 function winUnload(window) {
@@ -258,7 +244,6 @@ function winUnload(window) {
   window.removeEventListener("mouseup", onMouseUp, true);
   window.removeEventListener("dragstart", onDragStart, true);
   window.removeEventListener("dragend", onDragEnd, true);
-  window.removeEventListener("click", onClick, true);
 }
 
 function onPrefChange(prefName) {
