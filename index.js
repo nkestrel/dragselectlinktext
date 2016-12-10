@@ -36,7 +36,6 @@ var windows = require("sdk/windows").browserWindows,
   downWindow,
   workerPort,
   downOnTextLink = false,
-  dragging = false,
   cursorChanged = false,
   selectedAll = false,
   holdTimeout,
@@ -138,7 +137,6 @@ function onMouseDown(event) {
       downWindow = event.currentTarget;
     }
     selectedAll = false;
-    dragging = false;
     downOnTextLink = false;
   }
 }  
@@ -191,7 +189,6 @@ function onMouseMove(event) {
       } else {
         if (cursorChanged)
           changeCursor("");
-        dragging = true;
         wutils.sendMouseEvent("mousedown", point.x, point.y, 0, 0, mods);
         // Move enough to fire drag event, won't return until drag is finished
         wutils.sendMouseEvent("mousemove", point.x, point.y + 1000, 0, 0, mods);
@@ -207,14 +204,7 @@ function onMouseUp(event) {
   cleanup();
 }
 
-function onDragStart(event) {
-  if (downOnTextLink && !dragging) {
-    event.preventDefault();
-  }
-}
-
 function onDragEnd(event) {
-  dragging = false;
   cleanup();
 }
 
@@ -234,7 +224,6 @@ function cleanup() {
 function winLoad(window) {
   window.addEventListener("mousedown", onMouseDown, true); 
   window.addEventListener("mouseup", onMouseUp, true);
-  window.addEventListener("dragstart", onDragStart, true);
   window.addEventListener("dragend", onDragEnd, true);
 }
 
@@ -242,7 +231,6 @@ function winUnload(window) {
   window.removeEventListener("mousedown", onMouseDown, true);
   window.removeEventListener("mousemove", onMouseMove, true); 
   window.removeEventListener("mouseup", onMouseUp, true);
-  window.removeEventListener("dragstart", onDragStart, true);
   window.removeEventListener("dragend", onDragEnd, true);
 }
 
