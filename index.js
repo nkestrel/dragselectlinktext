@@ -146,11 +146,6 @@ function onMouseMove(event) {
     // Exceed drag threshold
     if (Math.abs(event.screenX - downEvent.screenX) > pref_dragThresholdX || 
         Math.abs(event.screenY - downEvent.screenY) > pref_dragThresholdY) {
-      // Immediately cancel hold timeout and remove mousemove listener
-      downWindow.clearTimeout(holdTimeout);
-      downWindow.clearTimeout(selectAllHoldTimeout);
-      downWindow.removeEventListener("mousemove", onMouseMove, true);
-
       let select = false;
       if (!selectedAll) {
         // Modifiers always do selection (alt modifier never gets to this point)
@@ -178,6 +173,10 @@ function onMouseMove(event) {
       let point = { x: downEvent.screenX - downWindow.mozInnerScreenX, 
                     y: downEvent.screenY - downWindow.mozInnerScreenY };
 
+      // After finishing with downEvent/downWindow and before changing cursor, do a cleanup
+      // to clear timers and remove mousemove listener
+      cleanup();
+
       // Send mousedown event to initiate selection or drag, use click count of zero to 
       // prevent click event and indicate to content script that it is not a real event 
       // and should be ignored
@@ -193,9 +192,6 @@ function onMouseMove(event) {
         // Move enough to fire drag event, won't return until drag is finished
         wutils.sendMouseEvent("mousemove", point.x, point.y + 1000, 0, 0, mods);
       }
-      
-      downEvent = null;
-      downWindow = null;
     }
   }
 }
