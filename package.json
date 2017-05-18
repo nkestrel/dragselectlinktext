@@ -10,7 +10,7 @@
   "main": "index.js",
   "hasEmbeddedWebExtension": true,
   "engines": {
-    "firefox": ">=52"
+    "firefox": ">=52.0"
   },
   "keywords": [
     "jetpack"
