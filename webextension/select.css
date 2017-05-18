@@ -1,0 +1,6 @@
+
+.dragselectlinktext-textcursor { cursor: text !important; }
+
+.dragselectlinktext-grabcursor { cursor: -moz-grab !important; }
+
+.dragselectlinktext-selectable { -moz-user-select: text !important; }

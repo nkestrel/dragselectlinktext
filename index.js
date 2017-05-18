@@ -1,281 +1,67 @@
-/* 
- * Drag-Select Link Text for Firefox
- * Copyright (C) 2014-2016 Kestrel
+/*
+ * Drag-Select Link Text
+ * Firefox Web Extension
+ * Copyright (C) 2014-2017 Kestrel
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. 
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-// Need chrome for sendMouseEvent
-const {Ci} = require("chrome"),
-  selectGesture = {
-    horizontal: "horizontalSelect",
-    hold: "holdSelect",
-    immediate: "immediateSelect"
-  };
- 
-var windows = require("sdk/windows").browserWindows,
-  utils = require("sdk/window/utils"),
-  simplePrefs = require("sdk/simple-prefs"),
-  pageMod = require("sdk/page-mod"),
-  self = require("sdk/self"),
-  { viewFor } = require("sdk/view/core"),
-
-  // Preferences
-  pref_selectGesture,
-  pref_dragThresholdX,
-  pref_dragThresholdY,
-  pref_holdTimeMS,
-  pref_selectAllHoldTimeMS,
-  pref_changeCursor,
-  pref_overrideUnselectable,
-
-  // State
-  downEvent,
-  downWindow,
-  workerPort,
-  downOnTextLink = false,
-  cursorChanged = false,
-  selectedAll = false,
-  holdTimeout,
-  selectAllHoldTimeout;
+const webExtension = require("sdk/webextension"),
+      simplePrefs = require("sdk/simple-prefs"),
+      prefService = require("sdk/preferences/service");
 
 
-exports.main = function() {
-  // Init preferences and catch changes
-  onPrefChange('');
-  simplePrefs.on("", onPrefChange);
+webExtension.startup().then(api => {
+  const {browser} = api;
 
-  // Attach content script to all pages and iframes 
-  pageMod.PageMod({
-    include: ["*"], 
-    contentScriptFile: self.data.url("content-script.js"),
-    contentStyleFile: self.data.url("cursors.css"),
-    onAttach: pageAttach,
-    attachTo: ["existing", "frame", "top"], 
-    contentScriptWhen: "start"
-  });
-  
-  // Enumerate existing windows and catch new
-  for (var window of utils.windows("navigator:browser", { includePrivate: true })) {
-    winLoad(window);
-  }  
-  windows.on("open", onWinOpen); 
-}
+  browser.runtime.onMessage.addListener((msg, sender, sendReply) => {
+    if (msg == "getPrefs") {
+      let prefs = {
+        "selectGesture":          simplePrefs.prefs.selectGesture,
+        "holdTimeMS":             simplePrefs.prefs.holdTimeMS,
+        "selectAllHoldTimeMS":    simplePrefs.prefs.selectAllHoldTimeMS,
+        "changeCursor":           simplePrefs.prefs.changeCursor,
+        "overrideUnselectable":   simplePrefs.prefs.overrideUnselectable,
+        "dragThresholdX":         simplePrefs.prefs.dragThresholdX,
+        "dragThresholdY":         simplePrefs.prefs.dragThresholdY
+      };
 
-exports.onUnload = function (reason) { 
-  if (reason != "shutdown") {
-    windows.on("open", function(){});
-    for (var window of utils.windows("navigator:browser", { includePrivate: true })) {
-      winUnload(window);
-    }
-  }
-}
-
-function onWinOpen(browserWindow) {
-  winLoad(utils.getMostRecentBrowserWindow());
-}
-
-function pageAttach(worker) {
-  if (pref_overrideUnselectable)
-    worker.port.emit("overrideUnselectable", pref_overrideUnselectable);
-  
-  worker.port.on("textLink", function(payload) {
-    workerPort = this; 
-    downOnTextLink = payload[0];
-    if (downWindow && downOnTextLink) {
-      // Change cursor after hold time to give visual feedback except when modifier
-      // keys are pressed which force selection
-      if ((pref_selectGesture == selectGesture.hold ||
-           pref_selectGesture == selectGesture.immediate) &&
-          !(downEvent.ctrlKey ||
-            downEvent.shiftKey ||
-            downEvent.metaKey)) {
-        holdTimeout = downWindow.setTimeout(function() {
-          holdTimeout = null;
-          if (pref_changeCursor) {
-            switch(pref_selectGesture) {
-              case selectGesture.hold:
-                changeCursor("text");
-                break;
-              case selectGesture.immediate:
-                changeCursor("grab");
-                break;
-            }
-          }
-        }, pref_holdTimeMS);
-      }
-
-      // Select full link after select hold time
-      selectAllHoldTimeout = downWindow.setTimeout(function() {
-        changeCursor("grab");
-        selectedAll = true;
-        if (workerPort) {
-          workerPort.emit("selectAll", downEvent.ctrlKey || downEvent.metaKey);
-        }
-      }, pref_selectAllHoldTimeMS);
-
-      // Only attach mousemove listener when needed
-      downWindow.addEventListener("mousemove", onMouseMove, true);
-    }
-  });
-  
-  worker.on("pagehide", function(event) {
-    // Worker only relevant when page is visible
-    workerPort = null; 
-    cursorChanged = false;
-  });
-}
-
-function onMouseDown(event) {
-  // Use click count (detail) to filter simulated mousedown
-  if (event.detail != 0) {
-    //Left button down
-    if (event.button == 0) {
-      downEvent = event;
-      downWindow = event.currentTarget;
-    }
-    selectedAll = false;
-    downOnTextLink = false;
-  }
-}  
-
-function onMouseMove(event) {
-  if (downWindow && downEvent) {
-    // Exceed drag threshold
-    if (Math.abs(event.screenX - downEvent.screenX) > pref_dragThresholdX || 
-        Math.abs(event.screenY - downEvent.screenY) > pref_dragThresholdY) {
-      let select = false;
-      if (!selectedAll) {
-        // Modifiers always do selection (alt modifier never gets to this point)
-        select = downEvent.ctrlKey || downEvent.shiftKey || downEvent.metaKey;
-        // Drag method, default to horizontal
-        if (!select) {
-          switch (pref_selectGesture) {
-            case selectGesture.hold:
-              select = holdTimeout == null;
+      let options = {};
+      for (let key of Object.keys(prefs)) {
+        if (typeof prefs[key] != "undefined") {
+          let newKey = key;
+          let newValue = prefs[key];
+          switch (key) {
+            case "selectGesture":
+              if (["horizontalSelect", "holdSelect", "immediateSelect"].indexOf(newValue) < 0) {
+                newValue = "horizontalSelect";
+              }
               break;
-            case selectGesture.immediate:
-              select = holdTimeout != null;
+            case "holdTimeMS":
+              newKey = "holdTimeSec";
+              newValue = Math.max(0, Math.round(prefs[key] / 100) / 10);
               break;
-            default:
-              select = Math.abs(event.screenY - downEvent.screenY) <= pref_dragThresholdY;
+            case "selectAllHoldTimeMS":
+              newKey = "holdAllTimeSec";
+              newValue = Math.max(0, Math.round(prefs[key] / 100) / 10);
+              break;
+            case "dragThresholdX":
+            case "dragThresholdY":
+              newValue = undefined;
+              break;
           }
+          if (typeof newValue != "undefined") {
+            options[newKey] = newValue;
+          }
+          prefService.reset("extensions.dragselectlinktext@kestrel." + key);
         }
       }
 
-      // Require window utils to generate browser mouse event
-      let wutils = downWindow.QueryInterface(Ci.nsIInterfaceRequestor)
-                             .getInterface(Ci.nsIDOMWindowUtils);
-      let mods = parseModifiers(downEvent); 
-      // Make event coordinates relative to main window viewport
-      let point = { x: downEvent.screenX - downWindow.mozInnerScreenX, 
-                    y: downEvent.screenY - downWindow.mozInnerScreenY };
-
-      // After finishing with downEvent/downWindow and before changing cursor, do a cleanup
-      // to clear timers and remove mousemove listener
-      cleanup();
-
-      // Send mousedown event to initiate selection or drag, use click count of zero to 
-      // prevent click event and indicate to content script that it is not a real event 
-      // and should be ignored
-      if (select) {
-        changeCursor("text");
-        // alt modifier required to make selection
-        mods |= wutils.MODIFIER_ALT;
-        wutils.sendMouseEvent("mousedown", point.x, point.y, 0, 0, mods);
-      } else {
-        if (cursorChanged)
-          changeCursor("");
-        wutils.sendMouseEvent("mousedown", point.x, point.y, 0, 0, mods);
-        // Move enough to fire drag event, with e10s off it doesn't return until
-        // drag is finished, with e10s on it returns immediately and doesn't work
-        // before hard coded 5 pixel threshold exceeded
-        wutils.sendMouseEvent("mousemove", point.x, point.y + 1000, 0, 0, mods);
+      if (Object.keys(options).length > 0) {
+        sendReply(options);
       }
     }
-  }
-}
-
-function onMouseUp(event) {
-  cleanup();
-}
-
-function onDragEnd(event) {
-  cleanup();
-}
-
-function cleanup() {
-  if (downWindow) {
-    downWindow.clearTimeout(holdTimeout);
-    downWindow.clearTimeout(selectAllHoldTimeout);
-    downWindow.removeEventListener("mousemove", onMouseMove, true);
-  }
-  if (cursorChanged)
-    changeCursor("");
-  downOnTextLink = false;
-  downEvent = null;
-  downWindow = null;
-}
-
-function winLoad(window) {
-  window.addEventListener("mousedown", onMouseDown, true); 
-  window.addEventListener("mouseup", onMouseUp, true);
-  window.addEventListener("dragend", onDragEnd, true);
-}
-
-function winUnload(window) {
-  window.removeEventListener("mousedown", onMouseDown, true);
-  window.removeEventListener("mousemove", onMouseMove, true); 
-  window.removeEventListener("mouseup", onMouseUp, true);
-  window.removeEventListener("dragend", onDragEnd, true);
-}
-
-function onPrefChange(prefName) {
-  pref_selectGesture = simplePrefs.prefs.selectGesture;
-  pref_dragThresholdX = simplePrefs.prefs.dragThresholdX;
-  pref_dragThresholdY = simplePrefs.prefs.dragThresholdY;
-  pref_holdTimeMS = simplePrefs.prefs.holdTimeMS;
-  pref_selectAllHoldTimeMS = simplePrefs.prefs.selectAllHoldTimeMS;
-  pref_changeCursor = simplePrefs.prefs.changeCursor;
-  pref_overrideUnselectable = simplePrefs.prefs.overrideUnselectable;
-}
-
-simplePrefs.on("restoreDefaults", function() {
-  if (viewFor(windows.activeWindow).confirm("Restore defaults?")) {
-    simplePrefs.prefs.selectGesture = "horizontalSelect";
-    simplePrefs.prefs.dragThresholdX = 5;
-    simplePrefs.prefs.dragThresholdY = 5;
-    simplePrefs.prefs.holdTimeMS = 300;
-    simplePrefs.prefs.selectAllHoldTimeMS = 1000;
-    simplePrefs.prefs.changeCursor = true;
-    simplePrefs.prefs.overrideUnselectable = false;
-  }
+  });
 });
-
-function changeCursor(type) {
-  if (pref_changeCursor)
-    // Can only change cursor when page is visible
-    if (workerPort) {
-      cursorChanged = type != "";
-      workerPort.emit("cursor", type);      
-    }
-}
-
-function parseModifiers(aEvent) {
-  var wutils  = Ci.nsIDOMWindowUtils;
-  var mods = 0;
-  if (aEvent.shiftKey)
-    mods |= wutils.MODIFIER_SHIFT;
-  if (aEvent.ctrlKey)
-    mods |= wutils.MODIFIER_CONTROL;
-  if (aEvent.altKey)
-    mods |= wutils.MODIFIER_ALT;
-  if (aEvent.metaKey)
-    mods |= wutils.MODIFIER_META;
-  if (aEvent.accelKey)
-    mods |= (navigator.platform.indexOf("Mac") >= 0) ? wutils.MODIFIER_META :
-                                                       wutils.MODIFIER_CONTROL;
-  return mods;
-}

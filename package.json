@@ -5,12 +5,12 @@
   "description": "Select link text with easy mouse gestures.",
   "author": "Kestrel",
   "license": "MPL-2.0",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "icon": "icon.png",
   "main": "index.js",
+  "hasEmbeddedWebExtension": true,
   "engines": {
-    "firefox": ">=38.0a1",
-    "seamonkey": ">=2.32"
+    "firefox": ">=52"
   },
   "keywords": [
     "jetpack"
@@ -18,67 +18,5 @@
   "permissions": {
     "private-browsing": true,
     "multiprocess": true
-  },
-  "preferences": [{
-      "name": "selectGesture",
-      "type": "radio",
-      "title": "Selection drag gesture",
-      "value": "horizontalSelect",
-      "options": [
-          {
-              "value": "horizontalSelect",
-              "label": "Horizontal"
-          },
-          {
-              "value": "holdSelect",
-              "label": "Hold"
-          },
-          {
-              "value": "immediateSelect",
-              "label": "Immediate"
-          }
-      ]
-    },
-    {
-        "name": "holdTimeMS",
-        "title": "Hold time (milliseconds)",
-        "type": "integer",
-        "value": 300
-    },
-    {
-        "name": "selectAllHoldTimeMS",
-        "title": "Select all hold time (milliseconds)",
-        "type": "integer",
-        "value": 1000
-    },
-    {
-        "name": "dragThresholdX",
-        "title": "Horizontal drag threshold (pixels)",
-        "type": "integer",
-        "value": 5
-    },
-    {
-        "name": "dragThresholdY",
-        "title": "Vertical drag threshold (pixels)",
-        "type": "integer",
-        "value": 5
-    },
-    {
-        "name": "changeCursor",
-        "title": "Change cursor",
-        "type": "bool",
-        "value": true
-    },
-    {
-        "name": "overrideUnselectable",
-        "title": "Override unselectable text",
-        "type": "bool",
-        "value": false
-    },
-    {
-        "name": "restoreDefaults",
-        "title": " ",
-        "type": "control",
-        "label": "Default"
-    }]
+  }
 }

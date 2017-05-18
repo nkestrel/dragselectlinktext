@@ -1,0 +1,50 @@
+
+{
+  "extensionName": {
+    "message": "Drag-Select Link Text",
+    "description": "Name of the extension."
+  },
+  "extensionDescription": {
+    "message": "Select link text with easy mouse gestures.",
+    "description": "Description of the extension."
+  },
+  "options_title_manualDragGesture": {
+    "message": "Manual drag gesture"
+  },
+  "options_title_holdTime": {
+    "message": "Hold time"
+  },
+  "options_title_advanced": {
+    "message": "Advanced"
+  },
+  "options_selectGesture_horizontalSelect": {
+    "message": "Horizontal - Select text by dragging horizontally."
+  },
+  "options_selectGesture_holdSelect": {
+    "message": "Hold - Select text by waiting for the hold time to elapse before dragging."
+  },
+  "options_selectGesture_immediateSelect": {
+    "message": "Immediate - Select text by immediately dragging before the hold time elapses."
+  },
+  "options_holdTimeSec": {
+    "message": "Select manually:"
+  },
+  "options_holdAllTimeSec": {
+    "message": "Select all:"
+  },
+  "options_changeCursor": {
+    "message": "Change cursor"
+  },
+  "options_overrideUnselectable": {
+    "message": "Override unselectable text"
+  },
+  "options_seconds": {
+    "message": "seconds"
+  },
+  "options_dialog_restoreDefaults": {
+    "message": "Restore defaults?"
+  },
+  "options_btndefault": {
+    "message": "Defaults"
+  }
+}

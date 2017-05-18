@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="browser_style.css">
+    <link rel="stylesheet" href="tweaks.css">
+  </head>
+  <body>
+    <div class="panel">
+      <div class="panel-section-header">
+        <div id="title_manualDragGesture" class="text-section-header"></div>
+      </div>
+      <div class="panel-section panel-section-formElements">
+        <div class="panel-formElements-item">
+          <input id="selectGesture_horizontalSelect" type="radio" name="selectGesture" value="horizontalSelect"><label for="selectGesture_horizontalSelect"></label>
+        </div>
+        <div class="panel-formElements-item">
+          <input id="selectGesture_holdSelect" type="radio" name="selectGesture" value="holdSelect"><label for="selectGesture_holdSelect"></label>
+        </div>
+        <div class="panel-formElements-item">
+          <input id="selectGesture_immediateSelect" type="radio" name="selectGesture" value="immediateSelect"><label for="selectGesture_immediateSelect"></label>
+        </div>
+      </div>
+      <div class="panel-section-header">
+        <div id="title_holdTime" class="text-section-header"></div>
+      </div>
+      <div class="panel-section panel-section-formElements">
+        <div class="panel-formElements-item">
+          <label for="holdTimeSec"></label><input id="holdTimeSec" type="number" name="holdTimeSec" min="0" step="0.1" required><label for="seconds"></label>
+        </div>
+        <div class="panel-formElements-item">
+          <label for="holdAllTimeSec"></label><input id="holdAllTimeSec" type="number" name="holdAllTimeSec" min="0" step="0.1" required><label for="seconds"></label>
+        </div>
+      </div>
+      <div class="panel-section-header">
+        <div id="title_advanced" class="text-section-header"></div>
+      </div>
+      <div class="panel-section panel-section-formElements">
+        <div class="checkboxItem">
+          <input id="changeCursor" type="checkbox" name="changeCursor"><label for="changeCursor"></label>
+        </div>
+        <div class="checkboxItem">
+          <input id="overrideUnselectable" type="checkbox" name="overrideUnselectable"><label for="overrideUnselectable"></label>
+        </div>
+      </div>
+      <input id="btndefault" type="button">
+    </div>
+    <script src="defaults.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>
