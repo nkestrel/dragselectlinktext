@@ -23,7 +23,12 @@ function saveOption(e) {
       value = e.target.value;
   }
   if (value != null) {
-    browser.storage.local.set({[e.target.name]: value});
+    let name = e.target.name;
+    if (value === defaultOptions[name]) {
+      browser.storage.local.remove(name);
+    } else {
+      browser.storage.local.set({[name]: value});
+    }
   }
 }
 
