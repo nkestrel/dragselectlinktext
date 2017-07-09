@@ -36,7 +36,7 @@ var
   selectedAll,
   holdTimeout,
   holdSelectAllTimeout,
-  mousemoveEvent,
+  mousemovePoint,
   selectionChanged;
 
 window.addEventListener("mousedown", onMouseDown, true);
@@ -128,7 +128,7 @@ function onMouseMove(event) {
   // Do manual selection, don't need to make elements selectable since it
   // doesn't recognize selectability.
   if (manualSelecting) {
-    if (!mousemoveEvent) {
+    if (!mousemovePoint) {
       startManualSelect(downEvent.clientX,
                         downEvent.clientY,
                         hasModifierKey(downEvent),
@@ -167,8 +167,9 @@ function onMouseMove(event) {
     }
   }
 
-  // Save mousemove event so drag direction can be determined on dragstart
-  mousemoveEvent = event;
+  // Save mousemove point so drag direction can be determined on dragstart
+  mousemovePoint = {screenX: event.screenX,
+                    screenY: event.screenY};
 }
 
 
@@ -192,13 +193,13 @@ function onDragStart(event) {
       deltaY;
 
   // Measure system drag threshold size
-  if (mousemoveEvent) {
-    deltaX = Math.abs(mousemoveEvent.screenX - event.screenX) + 1;
+  if (mousemovePoint) {
+    deltaX = Math.abs(mousemovePoint.screenX - event.screenX) + 1;
     if (deltaX > options.dragThresholdX) {
       options.dragThresholdX = deltaX;
       browser.storage.local.set({dragThresholdX: deltaX});
     }
-    deltaY = Math.abs(mousemoveEvent.screenY - event.screenY) + 1;
+    deltaY = Math.abs(mousemovePoint.screenY - event.screenY) + 1;
     if (deltaY > options.dragThresholdY) {
       options.dragThresholdY = deltaY;
       browser.storage.local.set({dragThresholdY: deltaY});
@@ -223,7 +224,7 @@ function onDragStart(event) {
         // SELECT_GESTURE.HORIZONTAL
         // dragstart can occur before mousemove for fast movements,
         // can't determine direction so assume selecting (more often the case)
-        doSelect = !mousemoveEvent || deltaX > deltaY;
+        doSelect = !mousemovePoint || deltaX > deltaY;
         break;
     }
   }
@@ -233,7 +234,7 @@ function onDragStart(event) {
     event.preventDefault();
     event.stopPropagation();
     manualSelecting = true;
-    mousemoveEvent = null;
+    mousemovePoint = null;
   }
 
   cleanup("dragstart");
@@ -272,7 +273,7 @@ function cleanup(cleanupEvent) {
     selectableChanger.clear();
     selectableTester.clear();
     downEvent = null;
-    mousemoveEvent = null;
+    mousemovePoint = null;
   }
 }
 
