@@ -31,7 +31,10 @@ Make selections in clickable areas without triggering a click.
 
 Advanced option available to override the CSS rule that prevents text 
 selection, note that pseudo-elements still cannot be selected ([Bug 
-12460](https://bugzilla.mozilla.org/show_bug.cgi?id=12460)). 
+12460](https://bugzilla.mozilla.org/show_bug.cgi?id=12460)).
+
+Doesn't work with middle-click paste on Linux due to [Bug 
+1015877](https://bugzilla.mozilla.org/show_bug.cgi?id=1015877). 
 
 Official Firefox support for the horizontal selection gesture is tracked by 
 [Bug 378775](https://bugzilla.mozilla.org/show_bug.cgi?id=378775).
