@@ -41,9 +41,6 @@
   "options_seconds": {
     "message": "seconds"
   },
-  "options_dialog_restoreDefaults": {
-    "message": "Restore defaults?"
-  },
   "options_btndefault": {
     "message": "Defaults"
   }
