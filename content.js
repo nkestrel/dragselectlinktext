@@ -293,7 +293,8 @@ function isSelectableTextLink(element, point) {
 
   let el = element;
   while (el) {
-    if (el instanceof HTMLAnchorElement) {
+    // Detect HTML and SVG anchors
+    if (el.tagName.toUpperCase() === "A") {
       return isTextNode(element, point);
     }
     el = el.parentElement;
