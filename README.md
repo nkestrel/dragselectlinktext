@@ -1,5 +1,6 @@
 ## Drag-Select Link Text
 Firefox Web Extension.
+[Available on AMO](https://addons.mozilla.org/en-US/firefox/addon/drag-select-link-text/)
 
 ![](icons/icon96.png)
 
