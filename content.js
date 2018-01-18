@@ -414,6 +414,9 @@ var ClassListChanger = {
         element &&
         element.tagName.toUpperCase() !== "SELECT" &&
         !(element instanceof HTMLDocument) &&
+        // Ignore all other documents than HTMLDocument
+        // to prevent issue #9 on XML documents
+        (document instanceof HTMLDocument) &&
         !element.classList.contains(value)) {
       element.classList.add(value);
       this._changed.push({element, value});
