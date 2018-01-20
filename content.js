@@ -365,16 +365,17 @@ function inSelection(point) {
 
 function getCaretRangeFromPoint(x, y) {
   let el = document.elementFromPoint(x, y);
+  let range;
   if (options.overrideUnselectable || selectableTester.test(el)) {
     let caretPos = document.caretPositionFromPoint(x, y);
     if (caretPos && caretPos.offsetNode &&
         caretPos.offset <= caretPos.offsetNode.textContent.length) {
-      let range = document.createRange();
+      range = document.createRange();
       range.setStart(caretPos.offsetNode, caretPos.offset);
       range.collapse(true);
-      return range;
     }
   }
+  return range;
 }
 
 
