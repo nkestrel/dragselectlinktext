@@ -68,8 +68,10 @@ browser.storage.onChanged.addListener(function(changes, areaName) {
 
 
 function onMouseDown(event) {
-  // Left mouse button only
-  if (event.button !== 0) {
+  // Left mouse button only and avoid interfering with XML
+  if (event.button !== 0 ||
+      !(event.target instanceof HTMLElement ||
+        event.target instanceof SVGElement)) {
     return;
   }
 
