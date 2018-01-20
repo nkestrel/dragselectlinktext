@@ -348,7 +348,8 @@ function inSelection(point) {
   let selection = window.getSelection();
   if (!selection.isCollapsed) {
     let caretPos = document.caretPositionFromPoint(point.x, point.y);
-    if (caretPos && caretPos.offsetNode) {
+    if (caretPos && caretPos.offsetNode &&
+        caretPos.offset <= caretPos.offsetNode.textContent.length) {
       for (let i = 0, iLen = selection.rangeCount; i < iLen; i++) {
         let range = selection.getRangeAt(i);
         if (!range.collapsed &&
@@ -366,7 +367,8 @@ function getCaretRangeFromPoint(x, y) {
   let el = document.elementFromPoint(x, y);
   if (options.overrideUnselectable || selectableTester.test(el)) {
     let caretPos = document.caretPositionFromPoint(x, y);
-    if (caretPos && caretPos.offsetNode) {
+    if (caretPos && caretPos.offsetNode &&
+        caretPos.offset <= caretPos.offsetNode.textContent.length) {
       let range = document.createRange();
       range.setStart(caretPos.offsetNode, caretPos.offset);
       range.collapse(true);
