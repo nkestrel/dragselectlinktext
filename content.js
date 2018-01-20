@@ -294,8 +294,9 @@ function isSelectableTextLink(element, point) {
 
   let el = element;
   while (el) {
-    // Detect HTML and SVG anchors
-    if (el.tagName.toUpperCase() === "A") {
+    // Detect HTML and SVG link anchors
+    if (el.tagName.toUpperCase() === "A" &&
+        (el.hasAttribute("href") || el.hasAttribute("xlink:href"))) {
       return isTextNode(element, point);
     }
     el = el.parentElement;
