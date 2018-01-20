@@ -416,7 +416,6 @@ var ClassListChanger = {
     if (this.enabled &&
         element &&
         element.tagName.toUpperCase() !== "SELECT" &&
-        !(element instanceof HTMLDocument) &&
         !element.classList.contains(value)) {
       element.classList.add(value);
       this._changed.push({element, value});
