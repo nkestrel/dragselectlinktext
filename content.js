@@ -175,7 +175,8 @@ function onMouseMove(event) {
 
 function onSelectionChange(event) {
   let selection = window.getSelection();
-  if (!selection.isCollapsed) {
+  // Selection must contain non-newline characters
+  if (!selection.isCollapsed && selection.toString().match(/[^\r\n]/g) != null) {
     window.removeEventListener("selectionchange", onSelectionChange, true);
     // Block click when selection changed
     if (manualSelecting) {
