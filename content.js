@@ -133,7 +133,7 @@ function onMouseMove(event) {
                         downEvent.clientY,
                         hasModifierKey(downEvent),
                         !downEvent.shiftKey);
-    } else {
+    } else if (selection.rangeCount > 0) {
       let range = getCaretRangeFromPoint(event.clientX, event.clientY);
       if (range) {
         // Extending selection does not consider selectability so intermediate
