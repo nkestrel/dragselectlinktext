@@ -1,0 +1,47 @@
+{
+  "extensionName": {
+    "message": "انتخاب متن پیوند با کشیدن",
+    "description": "Name of the extension."
+  },
+  "extensionDescription": {
+    "message": "متن پیوند را با حرکات آسان ماوس انتخاب کنید.",
+    "description": "Description of the extension."
+  },
+  "options_title_manualDragGesture": {
+    "message": "حرکت کشیدن دستی"
+  },
+  "options_title_holdTime": {
+    "message": "زمان نگه داشتن"
+  },
+  "options_title_advanced": {
+    "message": "پیشرفته"
+  },
+  "options_selectGesture_horizontalSelect": {
+    "message": "افقی - متن را با کشیدن به صورت افقی انتخاب کنید."
+  },
+  "options_selectGesture_holdSelect": {
+    "message": "نگه داشتن - متن را پس از سپری شدن زمان نگه داشتن بکشید و انتخاب کنید."
+  },
+  "options_selectGesture_immediateSelect": {
+    "message": "فوری - متن را فورا با کشیدن و بدون سپری شدن زمان نگه داشتن انخاب کنید."
+    
+  },
+  "options_holdTimeSec": {
+    "message": "انتخاب دستی:"
+  },
+  "options_holdAllTimeSec": {
+    "message": "انتخاب همه:"
+  },
+  "options_changeCursor": {
+    "message": "تغییر مکان نما"
+  },
+  "options_overrideUnselectable": {
+    "message": "لغو متن غیر قابل انتخاب"
+  },
+  "options_seconds": {
+    "message": "ثانیه"
+  },
+  "options_btndefault": {
+    "message": "پیش فرض ها"
+  }
+}
