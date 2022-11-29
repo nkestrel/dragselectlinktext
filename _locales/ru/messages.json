@@ -1,0 +1,46 @@
+{
+  "extensionName": {
+    "message": "Drag-Select Link Text",
+    "description": "Name of the extension."
+  },
+  "extensionDescription": {
+    "message": "Выделение текста ссылки простыми жестами мыши.",
+    "description": "Description of the extension."
+  },
+  "options_title_manualDragGesture": {
+    "message": "Жест выделения"
+  },
+  "options_title_holdTime": {
+    "message": "Время удержания"
+  },
+  "options_title_advanced": {
+    "message": "Дополнительно"
+  },
+  "options_selectGesture_horizontalSelect": {
+    "message": "Горизонтальное движение – выделение текста горизонтальным перетаскиванием курсора мыши."
+  },
+  "options_selectGesture_holdSelect": {
+    "message": "Удержание – выделение текста активируется при неподвижном удержании мыши (в течении настраиваемого промежутка времени)."
+  },
+  "options_selectGesture_immediateSelect": {
+    "message": "Немедленное выделение – выделение текста горизонтальным движением (до истечения настраиваемого промежутка времени)."
+  },
+  "options_holdTimeSec": {
+    "message": "Выделение части текста:"
+  },
+  "options_holdAllTimeSec": {
+    "message": "Выделение всей ссылки:"
+  },
+  "options_changeCursor": {
+    "message": "Менять внешний вид курсора"
+  },
+  "options_overrideUnselectable": {
+    "message": "Игнорировать запрет на выделение текста"
+  },
+  "options_seconds": {
+    "message": "сек."
+  },
+  "options_btndefault": {
+    "message": "Настройки по умолчанию"
+  }
+}
